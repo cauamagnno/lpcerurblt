@@ -404,6 +404,25 @@ function getUtms() {
   return utms;
 }
 
+const KIWIFY_UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+
+function getCookie(name) {
+  const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : '';
+}
+
+function buildCheckoutUrl(utms) {
+  const url = new URL(CHECKOUT_URL);
+  KIWIFY_UTM_KEYS.forEach(k => { if (utms[k]) url.searchParams.set(k, utms[k]); });
+
+  const gclid = utms.gclid || getCookie('_gcl_aw').split('.').pop() || '';
+  const sck = [getCookie('fbp'), getCookie('_fbc'), gclid].join('_');
+
+  url.searchParams.set('src', utms.utm_source || 'direto');
+  if (sck !== '__') url.searchParams.set('sck', sck);
+  return url.toString();
+}
+
 const MODULOS = [
   { titulo: 'Módulo 1 — O Despertar', aulas: 6, resumo: 'O tamanho real do mercado da REURB, quem o controla hoje, e por que ele ainda está adormecido.' },
   { titulo: 'Módulo 2 — Do Caos à Previsibilidade', aulas: 5, resumo: 'O método que organiza o fluxo da REURB e transforma um processo instável em algo previsível.' },
@@ -480,8 +499,6 @@ class Component extends DCLogic {
       stopClick: e => e.stopPropagation(),
       handleSubmit: e => {
         e.preventDefault();
-        this.setState({ submitted: true });
-
         const formData = new FormData(e.target);
         const utms = getUtms();
         const payload = {
@@ -494,6 +511,20 @@ class Component extends DCLogic {
           timestamp: new Date().toISOString(),
         };
 
+        const destino = buildCheckoutUrl(utms);
+        let redirected = false;
+        const go = () => {
+          if (redirected) return;
+          redirected = true;
+          window.location.href = destino;
+        };
+
+        // 1) tracking primeiro — o form ainda está no DOM aqui
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: 'form_submit', eventCallback: go, eventTimeout: 1500 });
+        setTimeout(go, 1500); // rede de segurança se o GTM estiver bloqueado
+
+        // 2) webhook do lead
         fetch(LEAD_WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -501,9 +532,8 @@ class Component extends DCLogic {
           keepalive: true,
         }).catch(() => {});
 
-        const checkoutUrl = new URL(CHECKOUT_URL);
-        Object.entries(utms).forEach(([key, value]) => checkoutUrl.searchParams.set(key, value));
-        window.location.href = checkoutUrl.toString();
+        // 3) só agora troca a tela
+        this.setState({ submitted: true });
       },
     };
   }

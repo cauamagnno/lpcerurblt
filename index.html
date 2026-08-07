@@ -60,7 +60,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </section>
 
 <section style="max-width:720px;margin:0 auto;padding:0 20px 44px;">
-  <div id="vsl-video" style="width:100%;margin:0 auto;background:#0A1A2F;border-radius:20px;overflow:hidden;border:1px solid rgba(10,26,47,.1);box-shadow:0 18px 50px rgba(10,26,47,.16);">
+  <div id="vsl-video" style="width:100%;max-width:420px;margin:0 auto;background:#0A1A2F;border-radius:20px;overflow:hidden;border:1px solid rgba(10,26,47,.1);box-shadow:0 18px 50px rgba(10,26,47,.16);">
     <iframe src="https://player.scaleup.com.br/embed/3b35cc4b6733e066d9329c22be0ecfbb0b8c6e64" title="Vsl 1 Cerurb" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;aspect-ratio:16/9;border:0;margin:0 auto;display:block;"></iframe>
   </div>
 
@@ -378,7 +378,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;price&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;R$97&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;anchorPrice&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;R$297&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;installments&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:12,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:1,&quot;max&quot;:24},&quot;installmentPrice&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;R$10,03&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;guaranteeDays&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:7,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:3,&quot;max&quot;:30}}">
 const CHECKOUT_URL = 'https://pay.kiwify.com.br/0Jgq8am';
-const LEAD_WEBHOOK_URL = 'https://viaza-n8n-webhook.nohypeia.com/webhook/cerurb';
+const LEAD_WEBHOOK_URL = 'https://viaza-n8n-webhook.nohypeia.com/webhook/cerurb-lead';
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
 
 function getUtms() {
@@ -512,6 +512,7 @@ class Component extends DCLogic {
 
         // 2) webhook do lead
         fetch(LEAD_WEBHOOK_URL, {
+
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),

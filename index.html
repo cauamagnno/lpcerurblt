@@ -61,7 +61,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <section style="max-width:720px;margin:0 auto;padding:0 20px 44px;">
   <div id="vsl-video" style="width:100%;max-width:420px;aspect-ratio:9/16;margin:0 auto;background:#0A1A2F;border-radius:20px;overflow:hidden;border:1px solid rgba(10,26,47,.1);box-shadow:0 18px 50px rgba(10,26,47,.16);">
-    <video id="vsl-video-player" controls="{{ true }}" controlsList="noplaybackrate" playsinline="{{ true }}" webkit-playsinline="{{ true }}" muted="{{ true }}" preload="metadata" poster="assets/vsl-poster.jpg" style="width:100%;height:100%;object-fit:cover;display:block;">
+    <video id="vsl-video-player" controls="{{ true }}" controlsList="noplaybackrate" playsinline="{{ true }}" webkit-playsinline="{{ true }}" preload="metadata" poster="assets/vsl-poster.jpg" style="width:100%;height:100%;object-fit:cover;display:block;">
       <source src="assets/vsl-video.mp4" type="video/mp4">
     </video>
   </div>
@@ -457,20 +457,6 @@ class Component extends DCLogic {
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     els.forEach(el => io.observe(el));
-
-    const vslVideo = document.getElementById('vsl-video-player');
-    if (vslVideo) {
-      const vslIo = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            vslVideo.play().catch(() => {});
-          } else {
-            vslVideo.pause();
-          }
-        });
-      }, { threshold: 0.5 });
-      vslIo.observe(vslVideo);
-    }
   }
 
   renderVals() {

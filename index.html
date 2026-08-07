@@ -457,6 +457,17 @@ class Component extends DCLogic {
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     els.forEach(el => io.observe(el));
+
+    const vslVideo = document.getElementById('vsl-video-player');
+    if (vslVideo) {
+      let maxWatched = 0;
+      vslVideo.addEventListener('timeupdate', () => {
+        if (vslVideo.currentTime > maxWatched) maxWatched = vslVideo.currentTime;
+      });
+      vslVideo.addEventListener('seeking', () => {
+        if (vslVideo.currentTime > maxWatched + 0.5) vslVideo.currentTime = maxWatched;
+      });
+    }
   }
 
   renderVals() {
